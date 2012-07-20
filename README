@@ -1,0 +1,18 @@
+MyBBcrypt v0.0
+
+MyBBcrypt is a MyBB mod to integrate bcrypt hash functions.
+There are many reasons why MD5 isn't secure for password storage anymore. Even with Salts.
+Because of this, and because I didn't find any similar projects, I decided to do a hack for MyBB to implement the bcrypt hash function as the main crypto.
+
+For additional information about bcrypt and MyBB, please use Google.
+MyBB is not responsible for this piece of software in any way.
+All Credits go to the MyBB Dev Community.
+MyBB (c) MyBB Group.
+
+License: MyBB itself is distributed under the GNU Lesser General Public License.
+Any Changes made by me are CC BY-NC-SA 3.0 - http://creativecommons.org/licenses/by-nc-sa/3.0/deed.de
+
+
+Changelog:
+v0.0
+-Initial Commit, just a plain mybb 1.6.8 (English)
