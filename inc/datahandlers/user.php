@@ -9,6 +9,18 @@
  * $Id: user.php 5828 2012-05-08 16:06:16Z Tomm $
  */
 
+/**
+ * WARNING: MODIFIED FILE!
+ * This file was modified in order to provide bcrypt-hashing in MyBB.
+ * MyBB Group and other developers are not responsible for any modification
+ * done to the code, or damage done to your board!
+ * See: https://github.com/TacticalCode/MyBBcrypt for further details
+ *
+ * Modification-Author: Damon Dransfeld
+ * Modification-License: CC-BY-NC-SA 3.0
+ * Modification-File-Version: 0.3
+ */
+
 // Disallow direct access to this file for security reasons
 if(!defined("IN_MYBB"))
 {
@@ -965,7 +977,7 @@ class UserDataHandler extends DataHandler
 
 		$this->user_insert_data = array(
 			"username" => $db->escape_string($user['username']),
-			"password" => $user['saltedpw'],
+			"password" => crypt($user['saltedpw'], '$2a$12$' . generate_bcrypt_salt()),
 			"salt" => $user['salt'],
 			"loginkey" => $user['loginkey'],
 			"email" => $db->escape_string($user['email']),
@@ -1109,7 +1121,7 @@ class UserDataHandler extends DataHandler
 		}
 		if(isset($user['saltedpw']))
 		{
-			$this->user_update_data['password'] = $user['saltedpw'];
+			$this->user_update_data['password'] = crypt($user['saltedpw'], '$2a$12$' . generate_bcrypt_salt());
 			$this->user_update_data['salt'] = $user['salt'];
 			$this->user_update_data['loginkey'] = $user['loginkey'];
 		}
