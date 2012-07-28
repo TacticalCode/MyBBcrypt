@@ -8,6 +8,18 @@
  *
  * $Id: functions_user.php 5734 2011-12-22 16:50:54Z ralgith $
  */
+ 
+ /**
+ * WARNING: MODIFIED FILE!
+ * This file was modified in order to provide bcrypt-hashing in MyBB.
+ * MyBB Group and other developers are not responsible for any modification
+ * done to the code, or damage done to your board!
+ * See: https://github.com/TacticalCode/MyBBcrypt for further details
+ *
+ * Modification-Author: Damon Dransfeld
+ * Modification-License: CC-BY-NC-SA 3.0
+ * Modification-File-Version: 0.3
+ */
 
 /**
  * Checks if a user with uid $uid exists in the database.
@@ -116,7 +128,8 @@ function validate_password_from_uid($uid, $password, $user = array())
 	{
 		// Generate a salt for this user and assume the password stored in db is a plain md5 password
 		$user['salt'] = generate_salt();
-		$user['password'] = salt_password($user['password'], $user['salt']);
+		// salt the password w/ the new salt, then bcrypt it (use a new bcrypt salt aswell)
+		$user['password'] = crypt(salt_password($user['password'], $user['salt']), generate_bcrypt_salt());
 		$sql_array = array(
 			"salt" => $user['salt'],
 			"password" => $user['password']
@@ -132,7 +145,9 @@ function validate_password_from_uid($uid, $password, $user = array())
 		);
 		$db->update_query("users", $sql_array, "uid = ".$user['uid'], 1);
 	}
-	if(salt_password(md5($password), $user['salt']) == $user['password'])
+	//Check the password stored in DB against the specified password, use the salt
+	//from the hash stored in the DB
+	if($user['password'] === crypt(salt_password(md5($password), $user['salt']), $user['password']))
 	{
 		return $user;
 	}
@@ -174,6 +189,8 @@ function update_password($uid, $password, $salt="")
 
 	// Create new password based on salt
 	$saltedpw = salt_password($password, $salt);
+	// bcrypt new salted password, generate a random bcrypt salt
+	$saltedpw = crypt($saltedpw, '$2a$12$' . generate_bcrypt_salt());
 
 	// Generate new login key
 	$loginkey = generate_loginkey();
@@ -208,6 +225,16 @@ function salt_password($password, $salt)
 function generate_salt()
 {
 	return random_str(8);
+}
+
+/**
+ * Generates a random bcrypt salt
+ * 
+ * @return string 22 chars long bcrypt-compatible salt
+ */
+function generate_bcrypt_salt()
+{
+	return substr(str_shuffle('aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789./'), 0, 22);
 }
 
 /**
