@@ -14,5 +14,9 @@ Any Changes made by me are CC BY-NC-SA 3.0 - http://creativecommons.org/licenses
 
 
 Changelog:
+v0.3
+-Proper impementation, support password changes and password resets
+v0.1,v0.2
+-First implementation, deprecated
 v0.0
 -Initial Commit, just a plain mybb 1.6.8 (English)
